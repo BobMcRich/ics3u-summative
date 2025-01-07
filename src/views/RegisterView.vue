@@ -21,6 +21,18 @@ const handleregister = () => {
     alert("Passwords do not match. Please try again.");
   }
 };
+
+const LoginByGoogle = async () => {
+  try {
+    const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+    store.user = user;
+    router.push("/movies/all");
+  } catch (error) {
+    alert("There was an error creating a user with Google!");
+  }
+};
+
+
 </script>
 
 <template>
@@ -41,6 +53,7 @@ const handleregister = () => {
           <button type="submit" class="button register">Register</button>
         </form>
       </div>
+      <button @click="registerByGoogle()" class="button register">Register by Google</button>
     </div>
   </div>
   <Footer />

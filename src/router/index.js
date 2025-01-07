@@ -7,6 +7,7 @@ import DetailView from '../views/DetailView.vue';
 import CartView from '../views/CartView.vue';
 import SettingView from '../views/SettingView.vue';
 
+
 const routes = [
     { path: '/', component: HomeView },
     { path: '/register', component: RegisterView },

@@ -1,154 +1,28 @@
 <script setup>
-import Details from "../components/Details.vue";
-import Footer from "../components/Footer.vue";
-import { useStore } from "../store"
-const store = useStore();
+import Header from '../components/Header.vue';
+import Feature from '../components/Feature.vue';
+import Hero from '../components/Hero.vue';
+import Footer from '../components/Footer.vue';
 </script>
 
 <template>
-    <div class="hero">
-    <div class="hero-content">
-      <h1>{{ `Hello ${store.name} ${store.lastName}!` }}</h1>
-      <div class="button-group">
-        <button class="language-btn">English</button>
-        <RouterLink to="/cart" class="button cart">cart</RouterLink>
-        <RouterLink to="/setting" class="button settings">settings</RouterLink>
-        <button class="logout">Logout</button>
-      </div>
-    </div>
+  <div class="page-container">
+    <Header />
+    <Hero />
+    <Feature />
+    <Footer />
   </div>
-  <Header />
-  <Details />
-  <Footer />
 </template>
 
 <style scoped>
 
-.hero {
-  background: linear-gradient(135deg, #FF6F61, #D83A6A);
+.page-container {
+  min-height: 100vh; 
   display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  height: 120px; 
-  position: sticky; 
-  top: 0; 
-  left: 0;
-  right: 0;
-  z-index: 10; 
-  color: white;
-  padding: 0 20px; 
-  transition: opacity 0.3s ease-in-out; 
-  will-change: opacity; 
+  flex-direction: column;
 }
 
-
-.hero.hidden {
-  opacity: 0; 
-}
-
-
-.hero-content {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  width: 100%;
-  max-width: 1200px; 
-}
-
-.hero h1 {
-  font-size: 1.8rem; 
-  font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0; 
-}
-
-.button-group {
-  display: flex;
-  align-items: center;
-  margin-left: auto; 
-}
-
-.language-btn, .button {
-  background-color: #FF6F61;
-  color: white;
-  padding: 8px 16px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s ease;
-  margin-left: 10px; 
-  justify-content: r;
-}
-
-.button:hover, .language-btn:hover {
-  background-color: #D83A6A;
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.register {
-  background-color: #4CAF50;
-}
-
-.register:hover {
-  background-color: #45a049;
-}
-
-.login {
-  background-color: #2196F3;
-}
-
-.login:hover {
-  background-color: #0b7dda;
-}
-
-.language-btn {
-  background-color: #FFB74D;
-  font-weight: bold;
-}
-
-.language-btn:hover {
-  background-color: #FB8C00;
-}
-.logout {
-  background-color: #f44336; 
-  color: white; 
-  font-size: 1rem; 
-  padding: 10px 20px;
-  border: none; 
-  border-radius: 5px;
-  cursor: pointer; 
-  transition: all 0.3s ease; 
-  display: inline-block; 
-}
-
-.logout:hover {
-  background-color: #d32f2f; 
-  transform: scale(1.05); 
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('https://www.transparenttextures.com/patterns/star-animated.gif'); 
-  background-size: cover;
-  opacity: 0.2;
-  pointer-events: none;
-}
-
-
-@media (max-width: 1024px) {
-  .hero {
-    opacity: 1;
-  }
+footer {
+  margin-top: auto; 
 }
 </style>

@@ -10,6 +10,7 @@ const movieData = ref(null);
 
 onMounted(async () => {
   try {
+    console.log(route);
     const response = await axios.get(`https://api.themoviedb.org/3/movie/${route.params.id}?api_key=${import.meta.env.VITE_TMDB_KEY}&append_to_response=videos`);
     movieData.value = response.data;  
     console.log(movieData.value);
