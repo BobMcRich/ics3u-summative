@@ -1,6 +1,8 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../firebase";
 import { useStore } from "../store";
 
 const store = useStore();
@@ -52,8 +54,8 @@ const LoginByGoogle = async () => {
           <input v-model="rePassword" type="password" placeholder="Re-Enter Password" class="input-field" required />
           <button type="submit" class="button register">Register</button>
         </form>
+        <button @click="LoginByGoogle()" class="button register">Register by Google</button>
       </div>
-      <button @click="registerByGoogle()" class="button register">Register by Google</button>
     </div>
   </div>
   <Footer />
