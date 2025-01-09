@@ -24,7 +24,7 @@ const handleregister = () => {
   }
 };
 
-const LoginByGoogle = async () => {
+async function registerByGoogle() {
   try {
     const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
     store.user = user;
@@ -54,7 +54,7 @@ const LoginByGoogle = async () => {
           <input v-model="rePassword" type="password" placeholder="Re-Enter Password" class="input-field" required />
           <button type="submit" class="button register">Register</button>
         </form>
-        <button @click="LoginByGoogle()" class="button register">Register by Google</button>
+        <button @click="registerByGoogle()" class="button register">Register by Google</button>
       </div>
     </div>
   </div>
