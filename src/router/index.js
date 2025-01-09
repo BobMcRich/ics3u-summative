@@ -6,6 +6,8 @@ import MoviesView from '../views/MoviesView.vue';
 import DetailView from '../views/DetailView.vue';
 import CartView from '../views/CartView.vue';
 import SettingView from '../views/SettingView.vue';
+import ErrorView from '@/views/ErrorView.vue';
+import { userAuthorized, useStore } from '../store';
 
 
 const routes = [
@@ -16,6 +18,7 @@ const routes = [
     { path: '/movies/:id', component: DetailView },
     { path: '/cart', component: CartView },
     { path: '/setting', component: SettingView }
+    { path: '/error', component : ErrorView }
 ]
 
 const router = createRouter({
