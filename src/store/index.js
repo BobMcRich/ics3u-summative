@@ -1,5 +1,7 @@
 import { ref } from "vue"
 import { defineStore } from "pinia";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
 export const useStore = defineStore('store', () => {
     const email = ref("");
@@ -14,7 +16,7 @@ export const useStore = defineStore('store', () => {
   export const userAuthorized = new Promise((resolve, reject) => {
     onAuthStateChanged(auth, user => {
       try {
-        const store = useStore();
+        const store = useStore(); 
         store.user = user;
         const storedCart = localStorage.getItem(`cart_${store.user.email}`);
   

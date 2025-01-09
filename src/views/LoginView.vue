@@ -4,6 +4,8 @@ import { ref } from 'vue';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
 import { useStore } from "../store";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../firebase"
 
 const router = useRouter();
 const email = ref(''); 
@@ -17,6 +19,15 @@ const handleLogin = () => {
     router.push("/movies"); 
   } else {
     alert("Invalid Password");
+  }
+};
+const loginByGoogle = async () => {
+  try {
+    const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+    store.user = user;
+    router.push("/movies/all");
+  } catch (error) {
+    alert("There was an error signing in with Google!");
   }
 };
 </script>
@@ -36,6 +47,7 @@ const handleLogin = () => {
           <input v-model="password" type="password" placeholder="Password" class="input-field" required />
           <button type="submit" class="button login">Login</button>
         </form>
+        <button @click="loginByGoogle()" class="button register">Register by Google</button>
       </div>
     </div>
   </div>
