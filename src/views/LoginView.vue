@@ -47,7 +47,7 @@ const loginByGoogle = async () => {
           <input v-model="password" type="password" placeholder="Password" class="input-field" required />
           <button type="submit" class="button login">Login</button>
         </form>
-        <button @click="loginByGoogle()" class="button register">Register by Google</button>
+        <button @click="loginByGoogle()" class="button register">Login by Google</button>
       </div>
     </div>
   </div>
