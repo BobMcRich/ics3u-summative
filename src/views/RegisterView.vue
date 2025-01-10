@@ -9,32 +9,39 @@ const store = useStore();
 const router = useRouter();
 const email = ref('');
 const password = ref('');
-const rePassword = ref(''); 
+const rePassword = ref('');
 const lastName = ref('');
 const name = ref('');
 
-const handleregister = () => {
-  if (password.value === rePassword.value) {
-    store.email = email.value;
-    store.name = name.value;
-    store.lastName = lastName.value;
-    router.push("/movies");
-  } else {
-    alert("Passwords do not match. Please try again.");
+async function registerByEmail() {
+  if (password.value !== rePassword.value) {
+    alert("Passwords do not match!");
+    return;
   }
-};
 
-async function registerByGoogle() {
   try {
-    const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+    const user = (await createUserWithEmailAndPassword(auth, email.value, password.value)).user;
+    await updateProfile(user, { displayName: `${name.value} ${lastName.value}` });
     store.user = user;
     router.push("/movies/all");
   } catch (error) {
-    alert("There was an error creating a user with Google!");
+    alert("There was an error creating a user with email!");
   }
-};
+}
 
+async function registerByGoogle() {
+  const provider = new GoogleAuthProvider();
 
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    await updateProfile(user, { displayName: `${name.value} ${lastName.value}` });
+    store.user = user;
+    router.push("/movies/all");
+  } catch (error) {
+    alert("There was an error with Google authentication!");
+  }
+}
 </script>
 
 <template>
@@ -46,7 +53,7 @@ async function registerByGoogle() {
       </div>
       <div class="form-container">
         <h2>Create an Account</h2>
-        <form @submit.prevent="handleregister">
+        <form @submit.prevent="registerByEmail">
           <input v-model="name" type="text" placeholder="Name" class="input-field" required />
           <input v-model="lastName" type="text" placeholder="Last Name" class="input-field" required />
           <input v-model="email" type="email" placeholder="Email" class="input-field" required />
