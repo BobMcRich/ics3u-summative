@@ -1,7 +1,6 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router';
 import { ref } from 'vue';
-import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
 import { useStore } from "../store";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -13,12 +12,14 @@ const password = ref('');
 
 const store = useStore();
 
-const handleLogin = () => {
-  if (password.value === "iloveyou") {
-    store.email = email.value; 
-    router.push("/movies"); 
-  } else {
-    alert("Invalid Password");
+const loginByEmail = async () => {
+  try {
+    const user = (await signInWithEmailAndPassword(auth, email.value, password.value)).user;
+    store.user = user;
+    router.push("/movies/all");
+  } catch (error) {
+    console.log(error);
+    alert("There was an error signing in with email!");
   }
 };
 const loginByGoogle = async () => {
@@ -42,7 +43,7 @@ const loginByGoogle = async () => {
       </div>
       <div class="form-container">
         <h2>Login to Your Account</h2>
-        <form @submit.prevent="handleLogin">
+        <form @submit.prevent="loginByEmail">
           <input v-model="email" type="email" placeholder="Email" class="input-field" required />
           <input v-model="password" type="password" placeholder="Password" class="input-field" required />
           <button type="submit" class="button login">Login</button>
