@@ -16,7 +16,7 @@ const loginByEmail = async () => {
   try {
     const user = (await signInWithEmailAndPassword(auth, email.value, password.value)).user;
     store.user = user;
-    router.push("/movies/all");
+    router.push("/movies");
   } catch (error) {
     console.log(error);
     alert("There was an error signing in with email!");
@@ -26,7 +26,7 @@ const loginByGoogle = async () => {
   try {
     const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
     store.user = user;
-    router.push("/movies/all");
+    router.push("/movies");
   } catch (error) {
     alert("There was an error signing in with Google!");
   }

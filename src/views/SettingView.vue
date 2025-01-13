@@ -2,25 +2,95 @@
 import { RouterLink } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import Footer from '../components/Footer.vue';
+import { auth } from "../firebase";
 import { useStore } from '../store';
+import { sendPasswordResetEmail, updateProfile, updatePassword } from 'firebase/auth';
 
 const store = useStore();
 
 const name = ref(store.name);
 const lastName = ref(store.lastName);
 const email = ref(store.email);
+const currentPassword = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+const isLoggedIn = ref(false);
 
 onMounted(() => {
-  name.value = store.name || '';
-  lastName.value = store.lastName || '';
-  email.value = store.email || ''; 
+  // Check if the user is authenticated and if their email is verified
+  const currentUser = auth.currentUser;
+  if (currentUser && currentUser.email) {
+    isLoggedIn.value = true;
+    name.value = store.name || '';
+    lastName.value = store.lastName || '';
+    email.value = store.email || '';
+  }
 });
 
-const handleSave = () => {
+// Update user profile in Pinia
+const handleSave = async () => {
+  if (!isLoggedIn.value) {
+    alert('You need to be logged in to update your information.');
+    return;
+  }
+
   store.name = name.value;
   store.lastName = lastName.value;
   store.email = email.value;
+
+  // Update the Firebase user profile if logged in
+  const currentUser = auth.currentUser;
+  if (currentUser) {
+    try {
+      await updateProfile(currentUser, {
+        displayName: `${name.value} ${lastName.value}`,
+      });
+      alert('Profile updated successfully.');
+    } catch (error) {
+      console.error(error);
+      alert('Error updating profile.');
+    }
+  }
 };
+
+// Handle password change
+const handleChangePassword = async () => {
+  if (!currentPassword.value || !newPassword.value || !confirmPassword.value) {
+    alert('Please fill in all fields.');
+    return;
+  }
+
+  if (newPassword.value !== confirmPassword.value) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  const currentUser = auth.currentUser;
+
+  if (currentUser) {
+    try {
+      const credentials = firebase.auth.EmailAuthProvider.credential(
+        currentUser.email, // Use current email
+        currentPassword.value // Current password entered by user
+      );
+
+      // Reauthenticate user
+      await currentUser.reauthenticateWithCredential(credentials);
+
+      // Update the password
+      await updatePassword(currentUser, newPassword.value);
+
+      alert('Password updated successfully.');
+      currentPassword.value = '';
+      newPassword.value = '';
+      confirmPassword.value = '';
+    } catch (error) {
+      console.error(error);
+      alert('Error changing password. Please try again later.');
+    }
+  }
+};
+
 </script>
 
 <template>
@@ -40,27 +110,59 @@ const handleSave = () => {
       <h1>{{ `Hello ${name} ${lastName}!` }}</h1>
 
       <div class="form-container">
-        <div class="form-field">
-          <label for="name">First Name:</label>
-          <input v-model="name" type="text" id="name" class="input-field" />
+        <!-- Show the editable fields only if the user is logged in -->
+        <div v-if="isLoggedIn">
+          <div class="form-field">
+            <label for="name">First Name:</label>
+            <input v-model="name" type="text" id="name" class="input-field" />
+          </div>
+
+          <div class="form-field">
+            <label for="lastName">Last Name:</label>
+            <input v-model="lastName" type="text" id="lastName" class="input-field" />
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email:</label>
+            <input v-model="email" type="email" id="email" class="input-field" disabled />
+          </div>
+
+          <button @click="handleSave" class="save-button">Save</button>
         </div>
 
-        <div class="form-field">
-          <label for="lastName">Last Name:</label>
-          <input v-model="lastName" type="text" id="lastName" class="input-field" />
+        <!-- Password change form -->
+        <div v-if="isLoggedIn">
+          <div class="form-field">
+            <label for="currentPassword">Current Password:</label>
+            <input v-model="currentPassword" type="password" id="currentPassword" class="input-field" />
+          </div>
+
+          <div class="form-field">
+            <label for="newPassword">New Password:</label>
+            <input v-model="newPassword" type="password" id="newPassword" class="input-field" />
+          </div>
+
+          <div class="form-field">
+            <label for="confirmPassword">Confirm New Password:</label>
+            <input v-model="confirmPassword" type="password" id="confirmPassword" class="input-field" />
+          </div>
+
+          <button @click="handleChangePassword" class="save-button">Change Password</button>
         </div>
 
-        <div class="form-field">
-          <label for="email">Email:</label>
-          <input v-model="email" type="email" id="email" class="input-field" disabled />
+        <!-- If not logged in, show a message -->
+        <div v-else>
+          <p>You must be logged in to update your profile and password.</p>
         </div>
-
-        <button @click="handleSave" class="save-button">Save</button>
       </div>
     </div>
     <Footer />
   </div>
 </template>
+
+<style scoped>
+/* Your existing styles */
+</style>
 
 <style scoped>
 body {

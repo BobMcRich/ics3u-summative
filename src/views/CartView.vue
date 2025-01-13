@@ -14,6 +14,9 @@ const store = useStore();
                 <button @click="store.cart.delete(key)" class="remove-button">Remove</button>
             </div>
         </div>
+        <div>
+              <button @click="store.cart.delete(key)" class="remove-button">Checkout</button>
+            </div>
     </div>
 </template>
 

@@ -23,7 +23,7 @@ async function registerByEmail() {
     const user = (await createUserWithEmailAndPassword(auth, email.value, password.value)).user;
     await updateProfile(user, { displayName: `${name.value} ${lastName.value}` });
     store.user = user;
-    router.push("/movies/all");
+    router.push("/movies");
   } catch (error) {
     alert("There was an error creating a user with email!");
   }
@@ -37,7 +37,7 @@ async function registerByGoogle() {
     const user = result.user;
     await updateProfile(user, { displayName: `${name.value} ${lastName.value}` });
     store.user = user;
-    router.push("/movies/all");
+    router.push("/movies");
   } catch (error) {
     alert("There was an error with Google authentication!");
   }
