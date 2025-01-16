@@ -17,7 +17,6 @@ const confirmPassword = ref('');
 const isLoggedIn = ref(false);
 
 onMounted(() => {
-  // Check if the user is authenticated and if their email is verified
   const currentUser = auth.currentUser;
   if (currentUser && currentUser.email) {
     isLoggedIn.value = true;
@@ -27,7 +26,6 @@ onMounted(() => {
   }
 });
 
-// Update user profile in Pinia
 const handleSave = async () => {
   if (!isLoggedIn.value) {
     alert('You need to be logged in to update your information.');
@@ -38,7 +36,6 @@ const handleSave = async () => {
   store.lastName = lastName.value;
   store.email = email.value;
 
-  // Update the Firebase user profile if logged in
   const currentUser = auth.currentUser;
   if (currentUser) {
     try {
@@ -53,7 +50,6 @@ const handleSave = async () => {
   }
 };
 
-// Handle password change
 const handleChangePassword = async () => {
   if (!currentPassword.value || !newPassword.value || !confirmPassword.value) {
     alert('Please fill in all fields.');
@@ -70,14 +66,14 @@ const handleChangePassword = async () => {
   if (currentUser) {
     try {
       const credentials = firebase.auth.EmailAuthProvider.credential(
-        currentUser.email, // Use current email
-        currentPassword.value // Current password entered by user
+        currentUser.email,
+        currentPassword.value 
       );
 
-      // Reauthenticate user
+      
       await currentUser.reauthenticateWithCredential(credentials);
 
-      // Update the password
+      
       await updatePassword(currentUser, newPassword.value);
 
       alert('Password updated successfully.');

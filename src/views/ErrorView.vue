@@ -7,8 +7,8 @@
 
 <style scope>
 h1 {
-  font-size: 2.5rem;
+  font-size: 4.5rem;
   font-weight: bold;
-  color: #e50914;
+  color: #b32a31;
 }
 </style>
