@@ -10,16 +10,27 @@ const name = ref(store.name);
 const lastName = ref(store.lastName);
 const email = ref(store.email);
 
+// Retrieve the current password from localStorage
+const password = ref(localStorage.getItem('password') || '');
+
+// On mount, initialize the fields
 onMounted(() => {
   name.value = store.name || '';
   lastName.value = store.lastName || '';
-  email.value = store.email || ''; 
+  email.value = store.email || '';
 });
 
+// Handle saving user settings and password update
 const handleSave = () => {
+  // Save name, lastName, email in store
   store.name = name.value;
   store.lastName = lastName.value;
   store.email = email.value;
+
+  // Save the password in localStorage (if changed)
+  localStorage.setItem('password', password.value);
+
+  alert('Your settings have been updated!');
 };
 </script>
 
@@ -53,6 +64,12 @@ const handleSave = () => {
         <div class="form-field">
           <label for="email">Email:</label>
           <input v-model="email" type="email" id="email" class="input-field" disabled />
+        </div>
+
+        <!-- Password Change Section -->
+        <div class="form-field">
+          <label for="password">Change Password:</label>
+          <input v-model="password" type="password" id="password" class="input-field" />
         </div>
 
         <button @click="handleSave" class="save-button">Save</button>
@@ -288,4 +305,3 @@ Footer {
   }
 }
 </style>
-
