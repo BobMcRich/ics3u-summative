@@ -4,6 +4,7 @@ import Feature from "../components/Feature.vue";
 import Footer from "../components/Footer.vue";
 import Hero from "../components/Hero.vue";
 import { useStore } from "../store";
+import { RouterLink } from "vue-router";
 
 const genresList = [
   {
@@ -34,12 +35,12 @@ const store = useStore();
 <template>
   <div class="hero">
     <div class="hero-content">
-      <h1>{{ `Hello ${store.name} ${store.lastName} ${store.email}!` }}</h1>
+      <h1>{{ `Hello ${store.user?.displayName}!` }}</h1>
       <div class="button-group">
         <button class="language-btn">English</button>
         <RouterLink to="/cart" class="button cart">cart</RouterLink>
         <RouterLink to="/setting" class="button settings">settings</RouterLink>
-        <button class="logout">Logout</button>
+        <button @click="store.logout" class="button">Logout</button>
       </div>
     </div>
   </div>

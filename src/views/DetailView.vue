@@ -8,11 +8,12 @@ const store = useStore();
 <template>
     <div class="hero">
     <div class="hero-content">
-      <h1>{{ `Hello ${store.name} ${store.lastName}!` }}</h1>
+      <h1>{{ `Hello ${store.user?.displayName}!` }}</h1>
       <div class="button-group">
         <button class="language-btn">English</button>
         <RouterLink to="/cart" class="button cart">cart</RouterLink>
         <RouterLink to="/setting" class="button settings">settings</RouterLink>
+        <button @click="store.logout" class="button">Logout</button>
         <button class="logout">Logout</button>
       </div>
     </div>

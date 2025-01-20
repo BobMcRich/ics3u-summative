@@ -1,14 +1,13 @@
 <script setup>
 import { ref } from 'vue';
 import { useStore } from '../store';
-const saveMovies = async 
 
 const store = useStore();
 const thankYouMessage = ref(false);
 
 const handleCheckout = () => {
-  store.cart = new Map();
   thankYouMessage.value = true;
+  store.clearCart();
 };
 </script>
 
@@ -19,11 +18,11 @@ const handleCheckout = () => {
       <img :src="`https://image.tmdb.org/t/p/w500${value.url}`" class="item-image" />
       <div class="item-details">
         <h2>{{ value.title }}</h2>
-        <button @click="store.cart.delete(key)" class="remove-button">Remove</button>
+        <button @click="store.removeFromCart(key)" class="remove-button">Remove</button>
       </div>
     </div>
     <div>
-      <button @click="handleCheckout" class="remove-button">Checkout</button>
+      <button @click="handleCheckout" class="checkout-button">Checkout</button>
     </div>
   </div>
   
@@ -33,11 +32,11 @@ const handleCheckout = () => {
 </template>
 
 <style scoped>
-.cart {
+.cart, .thank-you-message {
   padding: 20px;
   font-family: 'Arial', sans-serif;
   text-align: center;
-  background: linear-gradient(to right, #ff6f61, #d83a6a); 
+  background: linear-gradient(to right, #ff6f61, #d83a6a);
   color: white;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -71,7 +70,7 @@ const handleCheckout = () => {
   margin-bottom: 10px;
 }
 
-.remove-button {
+.remove-button, .checkout-button {
   background-color: #ff6f61;
   color: white;
   border: none;
@@ -81,17 +80,7 @@ const handleCheckout = () => {
   transition: background-color 0.3s ease;
 }
 
-.remove-button:hover {
+.remove-button:hover, .checkout-button:hover {
   background-color: #d83a6a;
-}
-
-.thank-you-message {
-  padding: 50px;
-  font-family: 'Arial', sans-serif;
-  text-align: center;
-  background: linear-gradient(to right, #ff6f61, #d83a6a); 
-  color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>
