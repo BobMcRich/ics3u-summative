@@ -1,82 +1,88 @@
 <script setup>
-import { RouterLink } from 'vue-router';
-import { ref, onMounted } from 'vue';
-import Footer from '../components/Footer.vue';
+import Footer from "../components/Footer.vue";
+import { ref } from 'vue';
+import { useRouter } from "vue-router";
 import { useStore } from '../store';
+import { updatePassword, updateProfile } from "firebase/auth";
+import { auth } from "../firebase";
 
 const store = useStore();
+const router = useRouter();
+const name = ref(store.user?.displayName?.split(" ")[0] || '');
+const lastName = ref(store.user?.displayName?.split(" ")[1] || '');
+const email = ref(store.user?.email || '');
+const password = ref('');
 
-const name = ref(store.name);
-const lastName = ref(store.lastName);
-const email = ref(store.email);
+const changeName = async () => {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      await updateProfile(user, { displayName: `${name.value} ${lastName.value}` });
 
-// Retrieve the current password from localStorage
-const password = ref(localStorage.getItem('password') || '');
+      store.user = user;
+    }
+  } catch (error) {
+    console.error("Error occurred during name change:", error);
+    alert("There was an error updating the name. Please try again.");
+  }
+};
 
-// On mount, initialize the fields
-onMounted(() => {
-  name.value = store.name || '';
-  lastName.value = store.lastName || '';
-  email.value = store.email || '';
-});
-
-// Handle saving user settings and password update
-const handleSave = () => {
-  // Save name, lastName, email in store
-  store.name = name.value;
-  store.lastName = lastName.value;
-  store.email = email.value;
-
-  // Save the password in localStorage (if changed)
-  localStorage.setItem('password', password.value);
-
-  alert('Your settings have been updated!');
+const changePassword = async () => {
+  try {
+    const user = auth.currentUser;
+    await updatePassword(user, password.value);
+    alert("Password updated successfully!");
+    password.value = '';
+  } catch (error) {
+    alert("There was an error updating the password. Please try again.");
+  }
 };
 </script>
 
 <template>
-  <div>
-    <div class="hero">
-      <div class="hero-content">
-        <h1>SuperFlims</h1>
-        <div class="button-group">
-          <button class="language-btn">English</button>
-          <RouterLink to="/cart" class="button cart">Cart</RouterLink>
-          <button class="logout">Logout</button>
-        </div>
+  <div class="hero">
+    <div class="hero-content">
+      <h1>SuperFlims</h1>
+      <div class="button-group">
+        <button class="language-btn">English</button>
+        <RouterLink to="/movies" class="button movies">Movies</RouterLink>
+        <RouterLink to="/cart" class="button cart">Cart</RouterLink>
+        <button @click="store.logout" class="button">Logout</button>
       </div>
     </div>
-
-    <div class="settings">
-      <h1>{{ `Hello ${name} ${lastName}!` }}</h1>
-
-      <div class="form-container">
-        <div class="form-field">
-          <label for="name">First Name:</label>
-          <input v-model="name" type="text" id="name" class="input-field" />
-        </div>
-
-        <div class="form-field">
-          <label for="lastName">Last Name:</label>
-          <input v-model="lastName" type="text" id="lastName" class="input-field" />
-        </div>
-
-        <div class="form-field">
-          <label for="email">Email:</label>
-          <input v-model="email" type="email" id="email" class="input-field" disabled />
-        </div>
-
-        <!-- Password Change Section -->
-        <div class="form-field">
-          <label for="password">Change Password:</label>
-          <input v-model="password" type="password" id="password" class="input-field" />
-        </div>
-
-        <button @click="handleSave" class="save-button">Save</button>
-      </div>
-    </div>
-    <Footer />
   </div>
+
+  <div class="settings">
+    <form @submit.prevent="changeName" class="form">
+      <div class="input-container">
+        <p>{{ `First Name: ${name}` }}</p>
+        <input v-model="name" type="text" id="name" class="input-field" />
+        <button type="submit" class="change-name">Change</button>
+      </div>
+    </form>
+    <form @submit.prevent="changeName" class="form">
+      <div class="input-container">
+        <p>{{ `Last Name: ${lastName}` }}</p>
+        <input v-model="lastName" type="text" id="lastName" class="input-field" />
+        <button type="submit" class="change-name">Change</button>
+      </div>
+    </form>
+    <div class="email">
+      <div class="input-container">
+        <p>Email:</p>
+        <input v-model="email" type="email" id="email" class="input-field" readonly />
+      </div>
+    </div>
+    <form @submit.prevent="changePassword" class="form">
+      <div class="input-container">
+        <p>New Password</p>
+        <input v-model="password" type="password" id="password" class="input-field" required />
+        <button type="submit" class="change-name">Change Password</button>
+      </div>
+    </form>
+  </div>
+
+  <Footer />
 </template>
 
 <style scoped>
@@ -87,6 +93,7 @@ body {
   background-color: #f4f4f4;
 }
 
+/* Hero Section */
 .hero {
   background: linear-gradient(135deg, #FF6F61, #D83A6A);
   display: flex;
@@ -104,10 +111,6 @@ body {
   will-change: opacity;
 }
 
-.hero.hidden {
-  opacity: 0;
-}
-
 .hero-content {
   display: flex;
   justify-content: space-between;
@@ -117,7 +120,7 @@ body {
 }
 
 .hero h1 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
   text-transform: uppercase;
@@ -138,16 +141,16 @@ body {
   pointer-events: none;
 }
 
+/* Button Styles */
 .button-group {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px;
 }
 
-.language-btn, .cart, .logout {
-  padding: 10px 15px;
+button {
+  padding: 12px 18px;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
@@ -167,10 +170,18 @@ body {
 .cart {
   background-color: #4CAF50;
   color: white;
+  font-weight: bold;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 2px solid #4CAF50;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .cart:hover {
-  background-color: #45a049;
+  background-color: white;
+  color: #4CAF50;
 }
 
 .logout {
@@ -182,86 +193,75 @@ body {
   background-color: #d32f2f;
 }
 
+/* Settings Form Styles */
 .settings {
   padding: 30px;
-  text-align: center;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   margin: 40px auto;
-  max-width: 600px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 .settings h1 {
-  font-size: 28px;
+  font-size: 26px;
   color: #333;
-  margin-bottom: 30px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-align: center;
 }
 
-.form-container {
-  background-color: rgba(255, 255, 255, 0.85);
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+.form {
+  margin-bottom: 25px;
 }
 
-.form-field {
+.input-container {
   margin-bottom: 20px;
   text-align: left;
 }
 
-.form-field label {
-  font-size: 16px;
+.input-container p {
   font-weight: 600;
-  margin-bottom: 10px;
-  display: block;
   color: #333;
 }
 
 .input-field {
   width: 100%;
   padding: 14px;
-  margin: 8px 0;
-  border: 1px solid #ddd;
+  margin-top: 8px;
+  border: 2px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
   transition: border-color 0.3s ease;
-  background-color: #fff;
 }
 
 .input-field:focus {
   border-color: #FF6F61;
 }
 
-.input-field[disabled] {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
+input[readonly] {
+  background-color: #f0f0f0;
 }
 
-.save-button {
+button.change-name {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   background-color: #FF6F61;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 20px;
 }
 
-.save-button:hover {
+button.change-name:hover {
   background-color: #D83A6A;
 }
 
-Footer {
+/* Footer Styles */
+.Footer {
   background-color: #282c34;
   color: white;
   padding: 15px;
@@ -270,10 +270,7 @@ Footer {
   margin-top: 50px;
 }
 
-.Footer p {
-  margin: 0;
-}
-
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .settings {
     padding: 20px;
@@ -294,7 +291,7 @@ Footer {
     font-size: 0.9rem;
   }
 
-  .save-button {
+  button.save-button {
     font-size: 1rem;
   }
 

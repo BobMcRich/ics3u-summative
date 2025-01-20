@@ -13,7 +13,7 @@ const routes = [
     { path: '/', meta: { auth: false }, component: HomeView },
     { path: '/register', meta: { auth: false }, component: RegisterView },
     { path: '/login', meta: { auth: false }, component: LoginView },
-    { path: '/movies', meta: { auth: false }, component: MoviesView },
+    { path: '/movies', meta: { auth: true }, component: MoviesView },
     { path: '/movies/:id', meta: { auth: false }, component: DetailView },
     { path: '/cart', meta: { auth: true }, component: CartView }, // Require authentication
     { path: '/setting', meta: { auth: true }, component: SettingView }, // Require authentication
